@@ -1,0 +1,4 @@
+include ':database:app',
+        ':internal:chooserx',
+        ':internal:lint',
+        ':internal:lintchecks'
