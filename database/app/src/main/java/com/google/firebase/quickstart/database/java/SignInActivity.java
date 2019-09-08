@@ -162,7 +162,7 @@ public class SignInActivity extends BaseActivity implements
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        // TODO: add Facebook signin option
+        // TODO: add Facebook signin option: https://firebase.google.com/docs/auth/android/facebook-login
         if (i == R.id.signInButton) { // this is Google Sign-in button
             signIn();
         }
