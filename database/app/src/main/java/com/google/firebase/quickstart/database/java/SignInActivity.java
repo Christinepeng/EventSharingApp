@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -21,7 +20,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.quickstart.database.R;
+import com.google.firebase.quickstart.database.java.models.User;
 
 /**
  * Demonstrate Firebase Authentication using a Google ID Token.
@@ -32,27 +34,17 @@ public class SignInActivity extends BaseActivity implements
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
 
-    // [START declare_auth]
+    private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-    // [END declare_auth]
 
     private GoogleSignInClient mGoogleSignInClient;
-    private TextView mStatusTextView;
-    private TextView mDetailTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_google);
 
-        // Views
-        mStatusTextView = findViewById(R.id.status);
-        mDetailTextView = findViewById(R.id.detail);
-
-        // Button listeners
         findViewById(R.id.signInButton).setOnClickListener(this);
-        findViewById(R.id.signOutButton).setOnClickListener(this);
-        findViewById(R.id.disconnectButton).setOnClickListener(this);
 
         // [START config_signin]
         // Configure Google Sign In
@@ -64,19 +56,19 @@ public class SignInActivity extends BaseActivity implements
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // [START initialize_auth]
-        // Initialize Firebase Auth
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-        // [END initialize_auth]
     }
 
     // [START on_start_check_user]
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
+
+        // Check auth on Activity start
+        if (mAuth.getCurrentUser() != null) {
+            onAuthSuccess(mAuth.getCurrentUser());
+        }
     }
     // [END on_start_check_user]
 
@@ -96,7 +88,6 @@ public class SignInActivity extends BaseActivity implements
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
                 // [START_EXCLUDE]
-                updateUI(null);
                 // [END_EXCLUDE]
             }
         }
@@ -119,12 +110,11 @@ public class SignInActivity extends BaseActivity implements
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            onAuthSuccess(mAuth.getCurrentUser());
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-                            updateUI(null);
                         }
 
                         // [START_EXCLUDE]
@@ -142,60 +132,39 @@ public class SignInActivity extends BaseActivity implements
     }
     // [END signin]
 
-    private void signOut() {
-        // Firebase sign out
-        mAuth.signOut();
+    private void onAuthSuccess(FirebaseUser user) {
+        String username = usernameFromEmail(user.getEmail());
 
-        // Google sign out
-        mGoogleSignInClient.signOut().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
-                    }
-                });
+        // Write new user
+        writeNewUser(user.getUid(), username, user.getEmail());
+
+        // Go to MainActivity
+        startActivity(new Intent(SignInActivity.this, MainActivity.class));
+        finish();
     }
 
-    private void revokeAccess() {
-        // Firebase sign out
-        mAuth.signOut();
-
-        // Google revoke access
-        mGoogleSignInClient.revokeAccess().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
-                    }
-                });
-    }
-
-    private void updateUI(FirebaseUser user) {
-        hideProgressDialog();
-        if (user != null) {
-            mStatusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
-            mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
-
-            findViewById(R.id.signInButton).setVisibility(View.GONE);
-            findViewById(R.id.signOutAndDisconnect).setVisibility(View.VISIBLE);
+    private String usernameFromEmail(String email) {
+        if (email.contains("@")) {
+            return email.split("@")[0];
         } else {
-            mStatusTextView.setText(R.string.signed_out);
-            mDetailTextView.setText(null);
-
-            findViewById(R.id.signInButton).setVisibility(View.VISIBLE);
-            findViewById(R.id.signOutAndDisconnect).setVisibility(View.GONE);
+            return email;
         }
     }
+
+    // [START basic_write]
+    private void writeNewUser(String userId, String name, String email) {
+        User user = new User(name, email);
+
+        mDatabase.child("users").child(userId).setValue(user);
+    }
+    // [END basic_write]
 
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        if (i == R.id.signInButton) {
+        // TODO: add Facebook signin option
+        if (i == R.id.signInButton) { // this is Google Sign-in button
             signIn();
-        } else if (i == R.id.signOutButton) {
-            signOut();
-        } else if (i == R.id.disconnectButton) {
-            revokeAccess();
         }
     }
 }
