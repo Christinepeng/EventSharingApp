@@ -23,6 +23,8 @@
 
         <activity android:name=".java.NewPostActivity" />
         <activity android:name=".java.PostDetailActivity" />
+
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDyf--AtZgzVgiElG2qepCA9BOQewxQo_o"/>
     </application>
 
 </manifest>
