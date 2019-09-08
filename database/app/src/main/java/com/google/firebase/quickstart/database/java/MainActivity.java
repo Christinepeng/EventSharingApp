@@ -16,8 +16,12 @@
 
 package com.google.firebase.quickstart.database.java;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -70,11 +74,15 @@ public class  MainActivity extends BaseActivity {
                 return mFragmentNames[position];
             }
         };
+
         // Set up the ViewPager with the sections adapter.
         mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mPagerAdapter);
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        // Create notification channel
+        createNotificationChannel();
 
         // Button launches NewPostActivity
         findViewById(R.id.fabNewPost).setOnClickListener(new View.OnClickListener() {
@@ -104,4 +112,20 @@ public class  MainActivity extends BaseActivity {
         }
     }
 
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    getString(R.string.channel_id),
+                    getString(R.string.channel_name),
+                    NotificationManager.IMPORTANCE_DEFAULT
+            );
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+            Log.d(TAG, "create notification successfully");
+        }
+    }
 }
