@@ -58,4 +58,8 @@
 
     <string name="label_generic_idp">Generic IDP Auth</string>
     <string name="desc_generic_idp">Use a generic identity provider, like Microsoft or Yahoo, to authenticate with Firebase.</string>
+
+    <string name="channel_name">ANDROID CHANNEL</string>
+    <string name="channel_description"></string>
+    <string name="channel_id">com.google.firebase.quickstart.database.ANDROID</string>
 </resources>
