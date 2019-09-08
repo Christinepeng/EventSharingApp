@@ -1,10 +1,12 @@
 package com.google.firebase.quickstart.database.java.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -18,9 +20,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.quickstart.database.R;
-import com.google.firebase.quickstart.database.java.models.Post;
+import com.google.firebase.quickstart.database.java.PostDetailActivity;
 
 import java.util.Random;
 
@@ -49,8 +50,6 @@ public class MapFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-
-
         return rootView;
     }
 
@@ -63,19 +62,22 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(final GoogleMap mMap) {
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                mMap.setMyLocationEnabled(true); // TODO
+                mMap.getUiSettings().setMyLocationButtonEnabled(true); // TODO
+                mMap.getUiSettings().setMapToolbarEnabled(false);
+                mMap.getUiSettings().setIndoorLevelPickerEnabled(true);
 
                 mMap.clear(); //clear old markers
 
-                // [START create_database_reference]
                 mDatabase = FirebaseDatabase.getInstance().getReference().child("posts");
-                // [END create_database_reference]
-
                 mDatabase.addChildEventListener(new ChildEventListener(){
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                         String title = (String) dataSnapshot.child("title").getValue();
                         LatLng position = generateRandomPosition();
-                        mMap.addMarker(new MarkerOptions().position(position).title(title));
+                        Marker marker = mMap.addMarker(new MarkerOptions().position(position).title(title));
+                        marker.showInfoWindow();
+                        marker.setTag(dataSnapshot.getKey());
                     }
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
@@ -103,6 +105,9 @@ public class MapFragment extends Fragment {
                 mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
+                        Intent intent = new Intent(getActivity(), PostDetailActivity.class);
+                        intent.putExtra(PostDetailActivity.EXTRA_POST_KEY, ((String) marker.getTag()));
+                        startActivity(intent);
                         return false;
                     }
                 });
