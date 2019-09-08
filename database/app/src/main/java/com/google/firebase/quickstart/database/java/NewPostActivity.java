@@ -100,7 +100,7 @@ public class NewPostActivity extends BaseActivity {
                         } else {
                             // Write new post
                             String postKey = writeNewPost(userId, user.username, title, body);
-                            sendNotification(postKey);
+                            sendNotification(postKey, title, body);
                         }
 
                         // Finish this Activity, back to the stream
@@ -147,7 +147,7 @@ public class NewPostActivity extends BaseActivity {
     }
     // [END write_fan_out]
 
-    private void sendNotification(String postKey) {
+    private void sendNotification(String postKey, String title, String body) {
         Intent intent = new Intent(this, PostDetailActivity.class);
         intent.putExtra(PostDetailActivity.EXTRA_POST_KEY, postKey);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -157,10 +157,8 @@ public class NewPostActivity extends BaseActivity {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, getString(R.string.channel_id))
                 .setSmallIcon(R.drawable.firebase_lockup_400) // TODO: find a better icon
-                .setContentTitle("My notification")
-                .setContentText("Much longer text that cannot fit one line...")
-                .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText("Much longer text that cannot fit one line..."))
+                .setContentTitle(title)
+                .setContentText(body)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that will fire when the user taps the notification
                 .setContentIntent(pendingIntent)
