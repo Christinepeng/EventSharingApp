@@ -62,8 +62,8 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(final GoogleMap mMap) {
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                mMap.setMyLocationEnabled(true); // TODO
-                mMap.getUiSettings().setMyLocationButtonEnabled(true); // TODO
+                //mMap.setMyLocationEnabled(true); // TODO
+                //mMap.getUiSettings().setMyLocationButtonEnabled(true); // TODO
                 mMap.getUiSettings().setMapToolbarEnabled(false);
                 mMap.getUiSettings().setIndoorLevelPickerEnabled(true);
 
@@ -95,7 +95,7 @@ public class MapFragment extends Fragment {
 
                 CameraPosition googlePlex = CameraPosition.builder()
                         .target(new LatLng(37.4629101, -122.2449094))
-                        .zoom(10)
+                        .zoom(9)
                         .bearing(0)
                         .tilt(45)
                         .build();
@@ -116,8 +116,17 @@ public class MapFragment extends Fragment {
     }
 
     private LatLng generateRandomPosition() {
-        double lat_eps = randomGenerator.nextDouble() / 10;
-        double lng_eps = randomGenerator.nextDouble() / 10;
-        return new LatLng(37.4629101 + lat_eps, -122.2449094 + lng_eps);
+        int region_id = randomGenerator.nextInt() % 3;
+
+        double lat_eps = randomGenerator.nextDouble() / 20;
+        double lng_eps = randomGenerator.nextDouble() / 20;
+
+        if (region_id == 0) { // North Bay Area
+            return new LatLng(37.758804 + lat_eps, -122.444735 + lng_eps);
+        } else if (region_id == 1) { // South Bay Area
+            return new LatLng(37.367012 + lat_eps, -122.073223 + lng_eps);
+        } else { // East Bay Area
+            return new LatLng(37.824656 + lat_eps, -122.240738 + lng_eps);
+        }
     }
 }
