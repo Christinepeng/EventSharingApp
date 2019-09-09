@@ -1,11 +1,11 @@
 package com.google.firebase.quickstart.database.java.fragment;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -24,7 +24,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.quickstart.database.R;
 import com.google.firebase.quickstart.database.java.PostDetailActivity;
-import com.google.maps.android.ui.BubbleIconFactory;
 import com.google.maps.android.ui.IconGenerator;
 
 import java.util.Random;
@@ -33,10 +32,7 @@ public class MapFragment extends Fragment {
 
     private static final String TAG = "MapFragment";
 
-    // [START define_database_reference]
     private DatabaseReference mDatabase;
-    // [END define_database_reference]
-
     private Random randomGenerator;
     private IconGenerator iconFactory;
 
@@ -47,7 +43,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        randomGenerator =  new Random(0);
+        randomGenerator = new Random(0);
         iconFactory = new IconGenerator(getActivity());
         iconFactory.setStyle(IconGenerator.STYLE_BLUE);
     }
@@ -78,7 +74,7 @@ public class MapFragment extends Fragment {
                 mMap.clear(); //clear old markers
 
                 mDatabase = FirebaseDatabase.getInstance().getReference().child("posts");
-                mDatabase.addChildEventListener(new ChildEventListener(){
+                mDatabase.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
                         String title = (String) dataSnapshot.child("title").getValue();
@@ -87,15 +83,19 @@ public class MapFragment extends Fragment {
                         marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(title)));
                         marker.setTag(dataSnapshot.getKey());
                     }
+
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
                     }
+
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
                     }
+
                     @Override
                     public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
                     }
+
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                     }
@@ -137,4 +137,5 @@ public class MapFragment extends Fragment {
             return new LatLng(37.824656 + lat_eps, -122.240738 + lng_eps);
         }
     }
+
 }

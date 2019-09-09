@@ -38,11 +38,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.quickstart.database.R;
-import com.google.firebase.quickstart.database.java.fragment.MyPostsFragment;
 import com.google.firebase.quickstart.database.java.fragment.MapFragment;
+import com.google.firebase.quickstart.database.java.fragment.MyPostsFragment;
 import com.google.firebase.quickstart.database.java.fragment.RecentPostsFragment;
 
-public class  MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity {
 
     private static final String TAG = "MainActivity";
 
@@ -56,24 +56,27 @@ public class  MainActivity extends BaseActivity {
 
         // Create the adapter that will return a fragment for each section
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            private final Fragment[] mFragments = new Fragment[] {
+            private final Fragment[] mFragments = new Fragment[]{
                     new MapFragment(),
                     new RecentPostsFragment(),
                     new MyPostsFragment(),
             };
-            private final String[] mFragmentNames = new String[] {
+            private final String[] mFragmentNames = new String[]{
                     "Map",
                     getString(R.string.heading_recent),
                     getString(R.string.heading_my_posts),
             };
+
             @Override
             public Fragment getItem(int position) {
                 return mFragments[position];
             }
+
             @Override
             public int getCount() {
                 return mFragments.length;
             }
+
             @Override
             public CharSequence getPageTitle(int position) {
                 return mFragmentNames[position];
@@ -108,10 +111,8 @@ public class  MainActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         if (i == R.id.action_logout) {
-            // [START Firebase Sign out]
             FirebaseAuth.getInstance().signOut();
 
-            // [START Firebase Sign out]
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.default_web_client_id))
                     .requestEmail()
@@ -123,7 +124,6 @@ public class  MainActivity extends BaseActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                         }
                     });
-            // [END Google Sign out]
 
             startActivity(new Intent(this, SignInActivity.class));
             finish();

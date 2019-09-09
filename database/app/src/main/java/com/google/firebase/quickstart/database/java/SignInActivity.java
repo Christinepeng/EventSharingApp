@@ -15,7 +15,6 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -135,9 +134,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
 
     private void FirebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "FirebaseAuthWithGoogle:" + acct.getId());
-        // [START_EXCLUDE silent]
         showProgressDialog();
-        // [END_EXCLUDE]
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -153,9 +150,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                         }
 
-                        // [START_EXCLUDE]
                         hideProgressDialog();
-                        // [END_EXCLUDE]
                     }
                 });
     }
@@ -177,9 +172,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                         }
 
-                        // [START_EXCLUDE]
                         hideProgressDialog();
-                        // [END_EXCLUDE]
                     }
                 });
     }
@@ -286,13 +279,11 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         return result;
     }
 
-    // [START basic_write]
     private void writeNewUser(String userId, String name, String email) {
         User user = new User(name, email);
 
         mDatabase.child("users").child(userId).setValue(user);
     }
-    // [END basic_write]
 
     @Override
     public void onClick(View v) {

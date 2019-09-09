@@ -3,7 +3,6 @@ package com.google.firebase.quickstart.database.java;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +12,7 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,10 +31,7 @@ public class NewPostActivity extends BaseActivity {
     private static final String REQUIRED = "Required";
     private static final int NOTIFICATION_ID = 514;
 
-    // [START declare_database_ref]
     private DatabaseReference mDatabase;
-    // [END declare_database_ref]
-
     private EditText mTitleField;
     private EditText mBodyField;
     private FloatingActionButton mSubmitButton;
@@ -44,9 +41,7 @@ public class NewPostActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
 
-        // [START initialize_database_ref]
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        // [END initialize_database_ref]
 
         mTitleField = findViewById(R.id.fieldTitle);
         mBodyField = findViewById(R.id.fieldBody);
@@ -81,7 +76,6 @@ public class NewPostActivity extends BaseActivity {
         setEditingEnabled(false);
         Toast.makeText(this, "Posting...", Toast.LENGTH_SHORT).show();
 
-        // [START single_value_read]
         final String userId = getUid();
         mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
@@ -90,7 +84,6 @@ public class NewPostActivity extends BaseActivity {
                         // Get user value
                         User user = dataSnapshot.getValue(User.class);
 
-                        // [START_EXCLUDE]
                         if (user == null) {
                             // User is null, error out
                             Log.e(TAG, "User " + userId + " is unexpectedly null");
@@ -106,18 +99,14 @@ public class NewPostActivity extends BaseActivity {
                         // Finish this Activity, back to the stream
                         setEditingEnabled(true);
                         finish();
-                        // [END_EXCLUDE]
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                        // [START_EXCLUDE]
                         setEditingEnabled(true);
-                        // [END_EXCLUDE]
                     }
                 });
-        // [END single_value_read]
     }
 
     private void setEditingEnabled(boolean enabled) {
@@ -130,7 +119,6 @@ public class NewPostActivity extends BaseActivity {
         }
     }
 
-    // [START write_fan_out]
     private String writeNewPost(String userId, String username, String title, String body) {
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
@@ -145,7 +133,6 @@ public class NewPostActivity extends BaseActivity {
         mDatabase.updateChildren(childUpdates);
         return postKey;
     }
-    // [END write_fan_out]
 
     private void sendNotification(String postKey, String title, String body) {
         Intent intent = new Intent(this, PostDetailActivity.class);

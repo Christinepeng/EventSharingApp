@@ -5,7 +5,8 @@ import com.google.firebase.database.Query;
 
 public class MyPostsFragment extends PostListFragment {
 
-    public MyPostsFragment() {}
+    public MyPostsFragment() {
+    }
 
     @Override
     public Query getQuery(DatabaseReference databaseReference) {
@@ -13,4 +14,5 @@ public class MyPostsFragment extends PostListFragment {
         return databaseReference.child("user-posts")
                 .child(getUid());
     }
+
 }
