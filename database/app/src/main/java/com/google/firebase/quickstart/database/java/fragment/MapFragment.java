@@ -1,6 +1,7 @@
 package com.google.firebase.quickstart.database.java.fragment;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -22,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.quickstart.database.R;
 import com.google.firebase.quickstart.database.java.PostDetailActivity;
+import com.google.maps.android.ui.BubbleIconFactory;
+import com.google.maps.android.ui.IconGenerator;
 
 import java.util.Random;
 
@@ -33,7 +37,8 @@ public class MapFragment extends Fragment {
     private DatabaseReference mDatabase;
     // [END define_database_reference]
 
-    Random randomGenerator = new Random();
+    private Random randomGenerator;
+    private IconGenerator iconFactory;
 
     public MapFragment() {
         // Required empty public constructor
@@ -42,6 +47,9 @@ public class MapFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        randomGenerator =  new Random(0);
+        iconFactory = new IconGenerator(getActivity());
+        iconFactory.setStyle(IconGenerator.STYLE_BLUE);
     }
 
     @Override
@@ -76,7 +84,7 @@ public class MapFragment extends Fragment {
                         String title = (String) dataSnapshot.child("title").getValue();
                         LatLng position = generateRandomPosition();
                         Marker marker = mMap.addMarker(new MarkerOptions().position(position).title(title));
-                        marker.showInfoWindow();
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(title)));
                         marker.setTag(dataSnapshot.getKey());
                     }
                     @Override
