@@ -69,7 +69,7 @@ public class NewPostTest {
 
         // Click sign up
         ViewInteraction appCompatButton = onView(
-                allOf(withId(R.id.buttonSignUp), withText(R.string.sign_up),
+                allOf(withId(R.id.FirebaseSignUpButton), withText(R.string.sign_up),
                         withParent(withId(R.id.layoutButtons)),
                         isDisplayed()));
         appCompatButton.perform(click());

@@ -62,4 +62,7 @@
     <string name="channel_name">ANDROID CHANNEL</string>
     <string name="channel_description"></string>
     <string name="channel_id">com.google.firebase.quickstart.database.ANDROID</string>
+
+    <string name="facebook_app_id">506643630152520</string>
+    <string name="fb_login_protocol_scheme">fb506643630152520</string>
 </resources>
